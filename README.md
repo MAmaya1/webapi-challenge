@@ -24,15 +24,25 @@ In this challenge, create a web API around the following resources: `Projects` a
 
 Demonstrate your understanding of this Sprint's concepts by answering the following free-form questions. Edit this document to include your answers after each question. Make sure to leave a blank line above and below your answer so it is clear and easy to read by your project manager.
 
-- [ ] Mention two parts of Express that you learned about this week.
+- [x] Mention two parts of Express that you learned about this week.
 
-- [ ] Describe Middleware?
+        Two parts of Express I learned this week are how to use middleware, and how to create routers.
 
-- [ ] Describe a Resource?
+- [x] Describe Middleware?
 
-- [ ] What can the API return to help clients know if a request was successful?
+    Middleware is a collection of functions we can use to make changes to our request and response objects, and allow further functionality by handling custom checks, utilizing a logger, or handling errors.  We can use either pre-built middleware or customize our own.
 
-- [ ] How can we partition our application into sub-applications?
+- [s] Describe a Resource?
+
+    A Resource is an object in our API that is accessed by an endpoint.  It is the data a client receives as a response.
+
+- [x] What can the API return to help clients know if a request was successful?
+
+    The api can return status codes such as 200 or 201 to let clients know a request is successful.
+
+- [x] How can we partition our application into sub-applications?
+
+    We can partition our application into sub-applications by using routers.
 
 ## Project Setup
 
@@ -73,8 +83,8 @@ The `projectModel.js` helper includes an extra method called `getProjectActions(
 
 Design and build the necessary endpoints to:
 
-- [ ] Perform CRUD operations on _projects_ and _actions_. When adding an action, make sure the `project_id` provided belongs to an existing `project`. If you try to add an action with an `id` of 3 and there is no project with that `id` the database will return an error.
-- [ ] Retrieve the list of actions for a project.
+- [x] Perform CRUD operations on _projects_ and _actions_. When adding an action, make sure the `project_id` provided belongs to an existing `project`. If you try to add an action with an `id` of 3 and there is no project with that `id` the database will return an error.
+- [x] Retrieve the list of actions for a project.
 
 ### Database Schemas
 

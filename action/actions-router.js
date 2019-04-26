@@ -43,8 +43,8 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     const newAction = req.body;
 
-    if (!newAction.description || !newAction.notes) {
-        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max) and notes.' })
+    if (!newAction.description || !newAction.notes || !newAction.project_id) {
+        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max), notes, and a valid project id.' })
     }
 
     projectsDb.get(newAction.project_id)

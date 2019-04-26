@@ -23,10 +23,17 @@ router.get('/:id', (req, res) => {
 
     db.get(actionId)
         .then(action => {
-            res.status(201).json(action)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Action data could not be retrieved.' })
+            if (action) {
+                db.get(actionId)
+                    .then(action => {
+                        res.status(201).json(action)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Action data could not be retrieved.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'An action with the specified ID does not exist.' })
+            }
         })
 })
 
@@ -63,13 +70,20 @@ router.put('/:id', (req, res) => {
         res.status(400).json({ errorMessage: 'This action requires a description (128 characters max).' })
     }
 
-        db.update(actionId, updatedAction)
-            .then(action => {
-                res.status(201).json(action)
-            })
-            .catch(err => {
-                res.status(500).json({ error: err, message: 'This item could not be updated.' })
-            })
+    db.get(actionId)
+        .then(action => {
+            if (action) {
+                db.update(actionId, updatedAction)
+                    .then(action => {
+                        res.status(201).json(action)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'This item could not be updated.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'An action witht the specified ID does not exist.' })
+            }
+        })
 })
 
 // DELETE action
@@ -77,12 +91,17 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     const actionId = req.params.id;
 
-    db.remove(actionId)
-        .then(() => {
-            res.status(200).end();
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'This action could not be deleted.' })
+    db.get(actionId)
+        .then(action => {
+            if (action) {
+                db.remove(actionId)
+                    .then(() => {
+                        res.status(200).end();
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'This action could not be deleted.' })
+                    })
+            }
         })
 })
 

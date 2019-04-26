@@ -1,6 +1,7 @@
 const express = require('express');
 
 const db = require('../data/helpers/actionModel');
+const projectsDb = require('../data/helpers/projectModel');
 
 const router = express.Router();
 
@@ -42,21 +43,24 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     const newAction = req.body;
 
-    if (!newAction.description) {
-        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max).' })
+    if (!newAction.description || !newAction.notes) {
+        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max) and notes.' })
     }
 
-    if (newAction.project_id) {
-        db.insert(newAction)
-            .then(action => {
-                res.status(201).json(action)
-            })
-            .catch(err => {
-                res.status(500).json({ error: err, message: 'Could not add action to database.' })
-            })
-    } else {
-        res.status(400).json({ errorMessage: 'Please provide a valid project ID.' })
-    }
+    projectsDb.get(newAction.project_id)
+        .then(project => {
+            if (project) {
+                db.insert(newAction)
+                    .then(action => {
+                        res.status(201).json(action)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Action could not be added to the database.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'Please provide a valid project id.' })
+            }
+        })
 
 })
 

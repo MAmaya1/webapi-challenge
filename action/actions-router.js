@@ -41,13 +41,12 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
     const newAction = req.body;
-    const projectId = req.body.project_id;
 
     if (!newAction.description) {
         res.status(400).json({ errorMessage: 'This action requires a description (128 characters max).' })
     }
 
-    if (projectId === db.project_id) {
+    if (newAction.project_id) {
         db.insert(newAction)
             .then(action => {
                 res.status(201).json(action)
@@ -56,8 +55,9 @@ router.post('/', (req, res) => {
                 res.status(500).json({ error: err, message: 'Could not add action to database.' })
             })
     } else {
-        res.status(400).json({ errorMessage: 'Please provide a valid project id.' })
+        res.status(400).json({ errorMessage: 'Please provide a valid project ID.' })
     }
+
 })
 
 // PUT (update action)
@@ -81,7 +81,7 @@ router.put('/:id', (req, res) => {
                         res.status(500).json({ error: err, message: 'This item could not be updated.' })
                     })
             } else {
-                res.status(404).json({ errorMessage: 'An action witht the specified ID does not exist.' })
+                res.status(404).json({ errorMessage: 'An action with the specified ID does not exist.' })
             }
         })
 })
@@ -101,6 +101,8 @@ router.delete('/:id', (req, res) => {
                     .catch(err => {
                         res.status(500).json({ error: err, message: 'This action could not be deleted.' })
                     })
+            } else {
+                res.status(404).json({ errorMessage: 'An action with the specified ID does not exist.' })
             }
         })
 })

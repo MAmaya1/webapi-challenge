@@ -34,18 +34,23 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
     const newAction = req.body;
+    const projectId = req.body.project_id;
 
-    if(!newPost.description) {
-        res.status(400).json({ errorMessage: 'This action requires a description.' })
+    if (!newAction.description) {
+        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max).' })
     }
 
-    db.insert(newAction)
-        .then(action => {
-            res.status(201).json(action)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Could not add action to database.' })
-        })
+    if (projectId === db.project_id) {
+        db.insert(newAction)
+            .then(action => {
+                res.status(201).json(action)
+            })
+            .catch(err => {
+                res.status(500).json({ error: err, message: 'Could not add action to database.' })
+            })
+    } else {
+        res.status(400).json({ errorMessage: 'Please provide a valid project id.' })
+    }
 })
 
 // PUT (update action)
@@ -54,13 +59,17 @@ router.put('/:id', (req, res) => {
     const actionId = req.params.id;
     const updatedAction = req.body;
 
-    db.insert(actionId, updatedAction)
-        .then(action => {
-            res.status(201).json(action)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'This item could not be updated.' })
-        })
+    if (!updatedAction.description) {
+        res.status(400).json({ errorMessage: 'This action requires a description (128 characters max).' })
+    }
+
+        db.update(actionId, updatedAction)
+            .then(action => {
+                res.status(201).json(action)
+            })
+            .catch(err => {
+                res.status(500).json({ error: err, message: 'This item could not be updated.' })
+            })
 })
 
 // DELETE action

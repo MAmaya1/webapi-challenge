@@ -23,10 +23,17 @@ router.get('/:id', (req, res) => {
 
     db.get(projectId)
         .then(project => {
-            res.status(201).json(project)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Could not retrieve project data.' })
+            if (project) {
+                db.get(projectId)
+                    .then(project => {
+                        res.status(201).json(project)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Could not retrieve project data.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'A project with the specified ID could not be found.' })
+            }
         })
 })
 
@@ -35,12 +42,19 @@ router.get('/:id', (req, res) => {
 router.get('/:id/actions', (req, res) => {
     const projectId = req.params.id;
 
-    db.getProjectActions(projectId)
+    db.get(projectId)
         .then(project => {
-            res.status(201).json(project)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Could not retrieve project actions.' })
+            if (project) {
+                db.getProjectActions(projectId)
+                    .then(project => {
+                        res.status(201).json(project)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Could not retrieve project actions.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'A project with the specified ID does not exist.' })
+            }
         })
 })
 
@@ -49,7 +63,7 @@ router.get('/:id/actions', (req, res) => {
 router.post('/', (req, res) => {
     const newProject = req.body;
     
-    if (!newPost.name || !newPost.description) {
+    if (!newProject.name || !newProject.description) {
         res.status(400).json({ errorMessage: 'New projects require a name and description.' })
     }
 
@@ -64,7 +78,7 @@ router.post('/', (req, res) => {
 
 // PUT (edit project)
 
-router.post('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     const projectId = req.params.id;
     const updatedProject = req.body;
 
@@ -72,12 +86,19 @@ router.post('/:id', (req, res) => {
         res.status(400).json({ errorMessage: 'Projects require a name and description.' })
     }
 
-    db.update(projectId, updatedProject)
+    db.get(projectId)
         .then(project => {
-            res.status(201).json(project)
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Project could not be updated.' })
+            if (project) {
+                db.update(projectId, updatedProject)
+                    .then(project => {
+                        res.status(201).json(project)
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Project could not be updated.' })
+                    })
+            } else {
+                res.status(404).json({ errorMessage: 'A project with the specified ID does not exist.' })
+            }
         })
 })
 
@@ -86,12 +107,19 @@ router.post('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     const projectId = req.params.id;
 
-    db.remove(projectId)
-        .then(() => {
-            res.status(200).end();
-        })
-        .catch(err => {
-            res.status(500).json({ error: err, message: 'Project could not be deleted.' })
+    db.get(projectId)
+        .then(project => {
+            if (project) {
+                db.remove(projectId)
+                    .then(() => {
+                        res.status(200).end();
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err, message: 'Project could not be deleted.' })
+                    })
+            } else {
+
+            }
         })
 })
 
